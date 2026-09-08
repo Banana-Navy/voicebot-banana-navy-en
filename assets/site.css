@@ -61,7 +61,7 @@ section[id] { scroll-margin-top: 96px; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 22px; }
 .hero-actions .button span { font-size: 21px; line-height: 1; }
 .hero-diagram { position: relative; min-height: 0; aspect-ratio: 900 / 705; overflow: hidden; margin: 0; border-radius: 28px; background: #eff7ff; box-shadow: 0 26px 70px rgba(7,29,55,.2); cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-.hero-diagram.is-touch-active { cursor: grabbing; box-shadow: 0 34px 82px rgba(7,29,55,.28); }
+.hero-diagram.is-touch-active { cursor: grabbing; box-shadow: 0 38px 88px rgba(7,29,55,.3); transition-duration: .12s; transition-timing-function: linear; }
 .hero-illustration { position: absolute; top: -7.092%; left: -75%; width: 176.222%; max-width: none; height: auto; transform: translate3d(var(--px), var(--py), 18px) scale(1.025); transform-origin: center; transition: transform .2s cubic-bezier(.2,.75,.2,1); will-change: transform; -webkit-user-drag: none; }
 .outcome-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 30px; }
 .outcome { min-height: 176px; padding: 18px; color: var(--ink); }

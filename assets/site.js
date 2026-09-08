@@ -98,7 +98,9 @@ bentos.forEach((card) => {
 
 const heroDiagram = document.querySelector(".hero-diagram");
 let activeHeroPointer = null;
+let activeHeroTouch = null;
 let heroResetTimer = null;
+const heroTouchStrength = { tiltX: 12, tiltY: 14, parallaxX: 30, parallaxY: 24, lift: "-4px" };
 
 const finishHeroTouch = (pointerId, delay = 180) => {
   if (!heroDiagram || pointerId !== activeHeroPointer) return;
@@ -110,20 +112,47 @@ const finishHeroTouch = (pointerId, delay = 180) => {
 
 if (heroDiagram) {
   heroDiagram.addEventListener("pointerdown", (event) => {
-    if ((event.pointerType !== "touch" && event.pointerType !== "pen") || reducedMotion.matches) return;
+    if (event.pointerType !== "pen" || reducedMotion.matches) return;
     activeHeroPointer = event.pointerId;
     window.clearTimeout(heroResetTimer);
     heroDiagram.classList.add("is-touch-active");
     try { heroDiagram.setPointerCapture(event.pointerId); } catch {}
-    setBentoMotion(heroDiagram, event.clientX, event.clientY, { tiltX: 8, tiltY: 10, parallaxX: 24, parallaxY: 18, lift: "-3px" });
+    setBentoMotion(heroDiagram, event.clientX, event.clientY, heroTouchStrength);
   });
   heroDiagram.addEventListener("pointermove", (event) => {
     if (event.pointerId !== activeHeroPointer || reducedMotion.matches) return;
-    setBentoMotion(heroDiagram, event.clientX, event.clientY, { tiltX: 8, tiltY: 10, parallaxX: 24, parallaxY: 18, lift: "-3px" });
+    setBentoMotion(heroDiagram, event.clientX, event.clientY, heroTouchStrength);
   });
   heroDiagram.addEventListener("pointerup", (event) => finishHeroTouch(event.pointerId));
   heroDiagram.addEventListener("pointercancel", (event) => finishHeroTouch(event.pointerId, 0));
   heroDiagram.addEventListener("lostpointercapture", (event) => finishHeroTouch(event.pointerId));
+
+  const findHeroTouch = (touches) => [...touches].find((touch) => touch.identifier === activeHeroTouch);
+  const finishFingerInteraction = (delay = 220) => {
+    activeHeroTouch = null;
+    heroDiagram.classList.remove("is-touch-active");
+    window.clearTimeout(heroResetTimer);
+    heroResetTimer = window.setTimeout(() => resetBento(heroDiagram), delay);
+  };
+
+  heroDiagram.addEventListener("touchstart", (event) => {
+    if (reducedMotion.matches || activeHeroTouch !== null) return;
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+    activeHeroTouch = touch.identifier;
+    window.clearTimeout(heroResetTimer);
+    heroDiagram.classList.add("is-touch-active");
+    setBentoMotion(heroDiagram, touch.clientX, touch.clientY, heroTouchStrength);
+  }, { passive: true });
+  heroDiagram.addEventListener("touchmove", (event) => {
+    if (reducedMotion.matches || activeHeroTouch === null) return;
+    const touch = findHeroTouch(event.touches);
+    if (touch) setBentoMotion(heroDiagram, touch.clientX, touch.clientY, heroTouchStrength);
+  }, { passive: true });
+  heroDiagram.addEventListener("touchend", (event) => {
+    if ([...event.changedTouches].some((touch) => touch.identifier === activeHeroTouch)) finishFingerInteraction();
+  }, { passive: true });
+  heroDiagram.addEventListener("touchcancel", () => finishFingerInteraction(0), { passive: true });
 }
 
 const menuButton = document.querySelector("[data-menu-button]");

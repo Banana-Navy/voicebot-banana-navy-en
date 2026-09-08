@@ -51,7 +51,7 @@ if (!/scrollStackSelector/.test(script) || !/scroll-stack/.test(script)) failure
 if (!/\.scroll-stack[^}]*display:\s*block/.test(stylesheet) || !/position:\s*sticky/.test(stylesheet)) failures.push("mobile sticky bento stacking is incomplete");
 if (/bento-stack-layers|stackPalette/.test(`${stylesheet}\n${script}`)) failures.push("deprecated shadow-based stacking remains");
 if (!/pointerout/.test(script) || !/prefers-reduced-motion/.test(script)) failures.push("motion-safe bento reset logic is incomplete");
-if (!/activeHeroPointer/.test(script) || !/pointerdown/.test(script) || !/pointerup/.test(script)) failures.push("touch-driven hero interaction is missing");
+if (!/activeHeroTouch/.test(script) || !/touchstart/.test(script) || !/touchmove/.test(script) || !/touchend/.test(script)) failures.push("finger-driven hero interaction is missing");
 if (!/\.hero-diagram[^}]*touch-action:\s*pan-y/.test(stylesheet)) failures.push("hero touch interaction does not preserve vertical scrolling");
 
 for (const spriteClass of ["outcomes", "sectors", "flow", "layers", "technology"]) {
