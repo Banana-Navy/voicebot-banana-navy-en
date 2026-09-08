@@ -30,16 +30,31 @@ const smallBentoSelector = [
   ".deployment-card",
 ].join(",");
 
-const stackPalette = ["#246fe5", "#c84152", "#1f8760", "#b9831e", "#6954bd"];
-
-document.querySelectorAll(smallBentoSelector).forEach((card, index) => {
+document.querySelectorAll(smallBentoSelector).forEach((card) => {
   if (!card.matches("[data-bento]")) return;
-  card.classList.add("bento-stack");
-  card.style.setProperty("--stack-accent", stackPalette[index % stackPalette.length]);
-  const layers = document.createElement("span");
-  layers.className = "bento-stack-layers";
-  layers.setAttribute("aria-hidden", "true");
-  card.prepend(layers);
+  card.classList.add("bento-parallax");
+});
+
+const scrollStackSelector = [
+  ".outcome-grid",
+  ".flow-grid",
+  ".layer-grid",
+  ".sector-grid",
+  ".tech-grid",
+  ".principles",
+  ".lane-items",
+  ".control-grid",
+  ".deployment-grid",
+].join(",");
+
+document.querySelectorAll(scrollStackSelector).forEach((group) => {
+  const cards = [...group.children].filter((card) => card.matches("[data-bento]"));
+  if (cards.length < 2) return;
+  group.classList.add("scroll-stack");
+  cards.forEach((card, index) => {
+    card.style.setProperty("--stack-top", `${84 + Math.min(index, 7) * 8}px`);
+    card.style.setProperty("--stack-z", `${index + 1}`);
+  });
 });
 
 const resetBento = (card) => {
@@ -52,19 +67,27 @@ const resetBento = (card) => {
   card.style.removeProperty("--lift");
 };
 
+const setBentoMotion = (card, clientX, clientY, strength = {}) => {
+  const bounds = card.getBoundingClientRect();
+  const x = Math.max(0, Math.min(1, (clientX - bounds.left) / bounds.width));
+  const y = Math.max(0, Math.min(1, (clientY - bounds.top) / bounds.height));
+  const tiltX = strength.tiltX ?? 5;
+  const tiltY = strength.tiltY ?? 6;
+  const parallaxX = strength.parallaxX ?? 5;
+  const parallaxY = strength.parallaxY ?? 4;
+  card.style.setProperty("--rx", `${(0.5 - y) * tiltX}deg`);
+  card.style.setProperty("--ry", `${(x - 0.5) * tiltY}deg`);
+  card.style.setProperty("--mx", `${x * 100}%`);
+  card.style.setProperty("--my", `${y * 100}%`);
+  card.style.setProperty("--px", `${(x - 0.5) * parallaxX}px`);
+  card.style.setProperty("--py", `${(y - 0.5) * parallaxY}px`);
+  card.style.setProperty("--lift", strength.lift ?? "-5px");
+};
+
 bentos.forEach((card) => {
   card.addEventListener("pointermove", (event) => {
     if (!finePointer.matches || reducedMotion.matches) return;
-    const bounds = card.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width;
-    const y = (event.clientY - bounds.top) / bounds.height;
-    card.style.setProperty("--rx", `${(0.5 - y) * 5}deg`);
-    card.style.setProperty("--ry", `${(x - 0.5) * 6}deg`);
-    card.style.setProperty("--mx", `${x * 100}%`);
-    card.style.setProperty("--my", `${y * 100}%`);
-    card.style.setProperty("--px", `${(x - 0.5) * 5}px`);
-    card.style.setProperty("--py", `${(y - 0.5) * 4}px`);
-    card.style.setProperty("--lift", "-5px");
+    setBentoMotion(card, event.clientX, event.clientY);
   });
   card.addEventListener("pointerleave", () => resetBento(card));
   card.addEventListener("pointerout", (event) => {
@@ -72,6 +95,36 @@ bentos.forEach((card) => {
   });
   card.addEventListener("pointercancel", () => resetBento(card));
 });
+
+const heroDiagram = document.querySelector(".hero-diagram");
+let activeHeroPointer = null;
+let heroResetTimer = null;
+
+const finishHeroTouch = (pointerId, delay = 180) => {
+  if (!heroDiagram || pointerId !== activeHeroPointer) return;
+  activeHeroPointer = null;
+  heroDiagram.classList.remove("is-touch-active");
+  window.clearTimeout(heroResetTimer);
+  heroResetTimer = window.setTimeout(() => resetBento(heroDiagram), delay);
+};
+
+if (heroDiagram) {
+  heroDiagram.addEventListener("pointerdown", (event) => {
+    if ((event.pointerType !== "touch" && event.pointerType !== "pen") || reducedMotion.matches) return;
+    activeHeroPointer = event.pointerId;
+    window.clearTimeout(heroResetTimer);
+    heroDiagram.classList.add("is-touch-active");
+    try { heroDiagram.setPointerCapture(event.pointerId); } catch {}
+    setBentoMotion(heroDiagram, event.clientX, event.clientY, { tiltX: 8, tiltY: 10, parallaxX: 24, parallaxY: 18, lift: "-3px" });
+  });
+  heroDiagram.addEventListener("pointermove", (event) => {
+    if (event.pointerId !== activeHeroPointer || reducedMotion.matches) return;
+    setBentoMotion(heroDiagram, event.clientX, event.clientY, { tiltX: 8, tiltY: 10, parallaxX: 24, parallaxY: 18, lift: "-3px" });
+  });
+  heroDiagram.addEventListener("pointerup", (event) => finishHeroTouch(event.pointerId));
+  heroDiagram.addEventListener("pointercancel", (event) => finishHeroTouch(event.pointerId, 0));
+  heroDiagram.addEventListener("lostpointercapture", (event) => finishHeroTouch(event.pointerId));
+}
 
 const menuButton = document.querySelector("[data-menu-button]");
 const mobileMenu = document.querySelector("[data-mobile-menu]");

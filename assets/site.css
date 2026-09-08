@@ -60,8 +60,9 @@ section[id] { scroll-margin-top: 96px; }
 .hero-intro { max-width: 620px; margin: 0; color: var(--muted); font-size: 17px; line-height: 1.55; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 22px; }
 .hero-actions .button span { font-size: 21px; line-height: 1; }
-.hero-diagram { position: relative; min-height: 0; aspect-ratio: 900 / 705; overflow: hidden; margin: 0; border-radius: 28px; background: #eff7ff; box-shadow: 0 26px 70px rgba(7,29,55,.2); }
-.hero-illustration { position: absolute; top: -7.092%; left: -75%; width: 176.222%; max-width: none; height: auto; }
+.hero-diagram { position: relative; min-height: 0; aspect-ratio: 900 / 705; overflow: hidden; margin: 0; border-radius: 28px; background: #eff7ff; box-shadow: 0 26px 70px rgba(7,29,55,.2); cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.hero-diagram.is-touch-active { cursor: grabbing; box-shadow: 0 34px 82px rgba(7,29,55,.28); }
+.hero-illustration { position: absolute; top: -7.092%; left: -75%; width: 176.222%; max-width: none; height: auto; transform: translate3d(var(--px), var(--py), 18px) scale(1.025); transform-origin: center; transition: transform .2s cubic-bezier(.2,.75,.2,1); will-change: transform; -webkit-user-drag: none; }
 .outcome-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 30px; }
 .outcome { min-height: 176px; padding: 18px; color: var(--ink); }
 .outcome .sprite { width: 68px; margin-bottom: 13px; border-radius: 15px; background-color: #e9f2ff; }
@@ -86,13 +87,9 @@ section[id] { scroll-margin-top: 96px; }
 [data-bento] { --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 50%; --px: 0px; --py: 0px; --lift: 0px; --reveal-y: 0px; position: relative; isolation: isolate; transform: perspective(900px) translate3d(0, calc(var(--reveal-y) + var(--lift)), 0) rotateX(var(--rx)) rotateY(var(--ry)); transform-style: preserve-3d; transition: transform 0.24s ease, box-shadow 0.24s ease, border-color 0.24s ease; will-change: transform; }
 [data-bento]::after { content: ""; position: absolute; z-index: -1; inset: 0; border-radius: inherit; opacity: 0; pointer-events: none; background: radial-gradient(320px circle at var(--mx) var(--my), rgba(36, 111, 229, 0.14), transparent 58%); transition: opacity 0.24s ease; }
 [data-bento]:hover::after { opacity: 1; }
-[data-bento] > :not(.bento-stack-layers) { transform: translateZ(10px); transition: transform .24s cubic-bezier(.2,.7,.2,1); }
-.bento-stack { overflow: visible; z-index: 0; }
-.bento-stack > :not(.bento-stack-layers) { transform: translate3d(var(--px), var(--py), 16px); }
-.bento-stack-layers { position: absolute; z-index: -1; inset: 0; border: 1px solid #cbdced; border-color: color-mix(in srgb, var(--stack-accent, #246fe5) 34%, #dbe4ef); border-radius: inherit; background: #f5f9ff; background: color-mix(in srgb, var(--stack-accent, #246fe5) 7%, white); box-shadow: 0 13px 28px rgba(11,31,58,.12); pointer-events: none; transform: translate3d(0, 8px, -8px); transition: transform .34s cubic-bezier(.2,.75,.2,1), box-shadow .34s ease; }
-.bento-stack-layers::before, .bento-stack-layers::after { content: ""; position: absolute; inset: -1px; border: 1px solid #d7e3ef; border-color: color-mix(in srgb, var(--stack-accent, #246fe5) 25%, #dbe4ef); border-radius: inherit; background: #f8fbff; background: color-mix(in srgb, var(--stack-accent, #246fe5) 4%, white); box-shadow: 0 10px 22px rgba(11,31,58,.08); transition: transform .34s cubic-bezier(.2,.75,.2,1), opacity .34s ease; }
-.bento-stack-layers::before { z-index: -1; transform: translate3d(-5px, 5px, -2px); }
-.bento-stack-layers::after { z-index: -2; transform: translate3d(5px, 10px, -4px); }
+[data-bento] > * { transform: translateZ(10px); transition: transform .24s cubic-bezier(.2,.7,.2,1); }
+.bento-parallax > * { transform: translate3d(var(--px), var(--py), 16px); }
+.hero-diagram > .hero-illustration { transform: translate3d(var(--px), var(--py), 18px) scale(1.025); transition: transform .2s cubic-bezier(.2,.75,.2,1); }
 
 /* User-supplied visual sheets, shown as exact cropped sprites. */
 .sprite { --sx: 0%; --sy: 0%; display: block; flex: 0 0 auto; overflow: hidden; height: auto; background-position: var(--sx) var(--sy); background-repeat: no-repeat; }
@@ -217,10 +214,6 @@ details p { margin: 0; padding: 0 18px 18px; color: var(--muted); font-size: 13p
 @media (hover: hover) and (pointer: fine) {
   [data-bento]:hover { border-color: #bdcfe7; box-shadow: 0 24px 58px rgba(11, 31, 58, 0.14); }
   .hero-diagram[data-bento]:hover { border-color: rgba(112,205,255,.58); box-shadow: 0 11px 0 -2px #185487, 0 22px 0 -6px #0b355f, 0 42px 84px rgba(7,29,55,.34); }
-  .bento-stack:hover { z-index: 6; box-shadow: 0 28px 58px rgba(11,31,58,.15); }
-  .bento-stack:hover .bento-stack-layers { box-shadow: 0 20px 36px rgba(11,31,58,.16); transform: translate3d(8px, 12px, -8px) rotate(1.5deg); }
-  .bento-stack:hover .bento-stack-layers::before { transform: translate3d(-16px, 1px, -2px) rotate(-3deg); }
-  .bento-stack:hover .bento-stack-layers::after { transform: translate3d(11px, 14px, -4px) rotate(3deg); }
 }
 
 @media (max-width: 1120px) {
@@ -265,7 +258,9 @@ details p { margin: 0; padding: 0 18px 18px; color: var(--muted); font-size: 13p
   .footer-badges img { height: 36px; }
   .arch-lane { grid-template-columns: 1fr; }
   .lane-items { grid-template-columns: 1fr; }
-  .bento-stack-layers { opacity: .78; }
+  .scroll-stack { display: block; padding-bottom: 0; }
+  .scroll-stack > [data-bento] { position: sticky; top: var(--stack-top, 84px); z-index: var(--stack-z, 1); margin-bottom: 18px; opacity: 1 !important; background: white; }
+  .section-dark .scroll-stack > [data-bento] { background: var(--navy); }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -273,10 +268,7 @@ details p { margin: 0; padding: 0 18px 18px; color: var(--muted); font-size: 13p
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
   [data-reveal] { opacity: 1; transform: none; }
   [data-bento] { transform: none !important; }
-  .bento-stack > :not(.bento-stack-layers) { transform: none !important; }
-  .bento-stack-layers { transform: translate3d(0, 8px, 0) !important; }
-  .bento-stack-layers::before { transform: translate3d(-5px, 5px, 0) !important; }
-  .bento-stack-layers::after { transform: translate3d(5px, 10px, 0) !important; }
+  .bento-parallax > * { transform: none !important; }
 }
 
 @media print {
