@@ -33,6 +33,7 @@ const index = await readFile(resolve(root, "index.html"), "utf8");
 const architecture = await readFile(resolve(root, "architecture.html"), "utf8");
 const combined = `${index}\n${architecture}`;
 const stylesheet = await readFile(resolve(root, "assets/site.css"), "utf8");
+const script = await readFile(resolve(root, "assets/site.js"), "utf8");
 
 for (const phrase of ["Demander une", "Fonctionnement", "Sécurité", "Belgique", "Conçue", "Une technologie"] ) {
   if (combined.includes(phrase)) failures.push(`French copy remains: ${phrase}`);
@@ -44,6 +45,13 @@ if (bentoCount < 30) failures.push(`expected at least 30 interactive cards, foun
 const spriteCount = (combined.match(/sprite-(?:outcomes|sectors|flow|layers|technology)/g) || []).length;
 if (spriteCount < 50) failures.push(`expected at least 50 supplied visual placements, found ${spriteCount}`);
 if (/assets\/icons\//.test(combined)) failures.push("legacy generic icon references remain in HTML");
+if (!/\.bento-stack/.test(stylesheet) || !/smallBentoSelector/.test(script)) failures.push("small-card stacked bento treatment is missing");
+if (!/pointerout/.test(script) || !/prefers-reduced-motion/.test(script)) failures.push("motion-safe bento reset logic is incomplete");
+
+for (const spriteClass of ["outcomes", "sectors", "flow", "layers", "technology"]) {
+  const pattern = new RegExp(`\\.sprite-${spriteClass}\\s*\\{[^}]*aspect-ratio:`);
+  if (!pattern.test(stylesheet)) failures.push(`sprite-${spriteClass}: intrinsic tile ratio is not protected`);
+}
 
 for (const match of stylesheet.matchAll(/url\("([^"]+)"\)/g)) {
   const reference = match[1];

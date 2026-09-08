@@ -19,12 +19,29 @@ if (reducedMotion.matches || !("IntersectionObserver" in window)) {
 
 const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
 const bentos = document.querySelectorAll("[data-bento]");
+const smallBentoSelector = [
+  ".outcome",
+  ".flow-step",
+  ".sector-card",
+  ".tech-card",
+  ".principle",
+  ".lane-item",
+  ".control-card",
+  ".deployment-card",
+].join(",");
+
+document.querySelectorAll(smallBentoSelector).forEach((card) => {
+  if (card.matches("[data-bento]")) card.classList.add("bento-stack");
+});
 
 const resetBento = (card) => {
   card.style.removeProperty("--rx");
   card.style.removeProperty("--ry");
   card.style.removeProperty("--mx");
   card.style.removeProperty("--my");
+  card.style.removeProperty("--px");
+  card.style.removeProperty("--py");
+  card.style.removeProperty("--lift");
 };
 
 bentos.forEach((card) => {
@@ -37,8 +54,14 @@ bentos.forEach((card) => {
     card.style.setProperty("--ry", `${(x - 0.5) * 6}deg`);
     card.style.setProperty("--mx", `${x * 100}%`);
     card.style.setProperty("--my", `${y * 100}%`);
+    card.style.setProperty("--px", `${(x - 0.5) * 5}px`);
+    card.style.setProperty("--py", `${(y - 0.5) * 4}px`);
+    card.style.setProperty("--lift", "-5px");
   });
   card.addEventListener("pointerleave", () => resetBento(card));
+  card.addEventListener("pointerout", (event) => {
+    if (!event.relatedTarget || !card.contains(event.relatedTarget)) resetBento(card);
+  });
   card.addEventListener("pointercancel", () => resetBento(card));
 });
 
@@ -62,4 +85,3 @@ if (menuButton && mobileMenu) {
 document.querySelectorAll("[data-year]").forEach((item) => {
   item.textContent = new Date().getFullYear();
 });
-
