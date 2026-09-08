@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://banana-navy.github.io/voicebot-banana-navy-en/sitemap.xml
+

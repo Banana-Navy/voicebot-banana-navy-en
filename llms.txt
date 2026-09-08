@@ -1,0 +1,14 @@
+# Banana Navy — Secure Conversational Infrastructure
+
+> Banana Navy designs secure voice agents and agentic systems for high-stakes organisations.
+
+## Public pages
+
+- [Platform overview](https://banana-navy.github.io/voicebot-banana-navy-en/): capabilities, operating flow, security layers, sectors and technology.
+- [Detailed architecture](https://banana-navy.github.io/voicebot-banana-navy-en/architecture.html): control lanes, call lifecycle, governance and deployment model.
+
+## Contact
+
+- Website: https://www.banana-navy.ai
+- Email: marc@banana-navy.com
+
