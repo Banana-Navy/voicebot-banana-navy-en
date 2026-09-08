@@ -236,6 +236,7 @@ details p { margin: 0; padding: 0 18px 18px; color: var(--muted); font-size: 13p
   .container { width: min(100% - 26px, 1180px); }
   .brand span { display: none; }
   .brand { min-width: 0; }
+  .brand img { width: auto; height: 44.2px; }
   .hero { padding-top: 28px; }
   .hero-kicker { flex-wrap: wrap; font-size: 10px; line-height: 1.5; }
   .hero-kicker::after { width: 36px; }
