@@ -30,8 +30,16 @@ const smallBentoSelector = [
   ".deployment-card",
 ].join(",");
 
-document.querySelectorAll(smallBentoSelector).forEach((card) => {
-  if (card.matches("[data-bento]")) card.classList.add("bento-stack");
+const stackPalette = ["#246fe5", "#c84152", "#1f8760", "#b9831e", "#6954bd"];
+
+document.querySelectorAll(smallBentoSelector).forEach((card, index) => {
+  if (!card.matches("[data-bento]")) return;
+  card.classList.add("bento-stack");
+  card.style.setProperty("--stack-accent", stackPalette[index % stackPalette.length]);
+  const layers = document.createElement("span");
+  layers.className = "bento-stack-layers";
+  layers.setAttribute("aria-hidden", "true");
+  card.prepend(layers);
 });
 
 const resetBento = (card) => {

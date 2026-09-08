@@ -47,7 +47,8 @@ if (spriteCount < 50) failures.push(`expected at least 50 supplied visual placem
 if (/assets\/icons\//.test(combined)) failures.push("legacy generic icon references remain in HTML");
 if (!/assets\/visuals\/hero-architecture\.png/.test(index)) failures.push("latest supplied hero illustration is not integrated");
 if (!/\.hero-illustration\s*\{[^}]*width:[^}]*height:\s*auto/.test(stylesheet)) failures.push("hero illustration aspect ratio is not protected");
-if (!/\.bento-stack/.test(stylesheet) || !/smallBentoSelector/.test(script)) failures.push("small-card stacked bento treatment is missing");
+if (!/\.bento-stack-layers/.test(stylesheet) || !/bento-stack-layers/.test(script)) failures.push("real layered bento elements are missing");
+if (!/smallBentoSelector/.test(script) || !/stackPalette/.test(script)) failures.push("small-card stacked bento treatment is incomplete");
 if (!/pointerout/.test(script) || !/prefers-reduced-motion/.test(script)) failures.push("motion-safe bento reset logic is incomplete");
 
 for (const spriteClass of ["outcomes", "sectors", "flow", "layers", "technology"]) {
