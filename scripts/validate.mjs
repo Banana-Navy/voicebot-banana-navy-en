@@ -45,6 +45,8 @@ if (bentoCount < 30) failures.push(`expected at least 30 interactive cards, foun
 const spriteCount = (combined.match(/sprite-(?:outcomes|sectors|flow|layers|technology)/g) || []).length;
 if (spriteCount < 50) failures.push(`expected at least 50 supplied visual placements, found ${spriteCount}`);
 if (/assets\/icons\//.test(combined)) failures.push("legacy generic icon references remain in HTML");
+if (!/assets\/visuals\/hero-architecture\.png/.test(index)) failures.push("latest supplied hero illustration is not integrated");
+if (!/\.hero-illustration\s*\{[^}]*width:[^}]*height:\s*auto/.test(stylesheet)) failures.push("hero illustration aspect ratio is not protected");
 if (!/\.bento-stack/.test(stylesheet) || !/smallBentoSelector/.test(script)) failures.push("small-card stacked bento treatment is missing");
 if (!/pointerout/.test(script) || !/prefers-reduced-motion/.test(script)) failures.push("motion-safe bento reset logic is incomplete");
 
