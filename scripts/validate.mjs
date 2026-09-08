@@ -32,6 +32,7 @@ for (const page of pages) {
 const index = await readFile(resolve(root, "index.html"), "utf8");
 const architecture = await readFile(resolve(root, "architecture.html"), "utf8");
 const combined = `${index}\n${architecture}`;
+const stylesheet = await readFile(resolve(root, "assets/site.css"), "utf8");
 
 for (const phrase of ["Demander une", "Fonctionnement", "Sécurité", "Belgique", "Conçue", "Une technologie"] ) {
   if (combined.includes(phrase)) failures.push(`French copy remains: ${phrase}`);
@@ -40,9 +41,23 @@ for (const phrase of ["Demander une", "Fonctionnement", "Sécurité", "Belgique"
 const bentoCount = (combined.match(/data-bento/g) || []).length;
 if (bentoCount < 30) failures.push(`expected at least 30 interactive cards, found ${bentoCount}`);
 
+const spriteCount = (combined.match(/sprite-(?:outcomes|sectors|flow|layers|technology)/g) || []).length;
+if (spriteCount < 50) failures.push(`expected at least 50 supplied visual placements, found ${spriteCount}`);
+if (/assets\/icons\//.test(combined)) failures.push("legacy generic icon references remain in HTML");
+
+for (const match of stylesheet.matchAll(/url\("([^"]+)"\)/g)) {
+  const reference = match[1];
+  if (/^(?:data:|https?:)/.test(reference)) continue;
+  try {
+    await access(resolve(root, "assets", reference));
+  } catch {
+    failures.push(`site.css: missing local reference ${reference}`);
+  }
+}
+
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`Validated ${pages.length} English pages, local references and ${bentoCount} bento surfaces.`);
+  console.log(`Validated ${pages.length} English pages, ${bentoCount} bento surfaces and ${spriteCount} supplied visual placements.`);
 }
