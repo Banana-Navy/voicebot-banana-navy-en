@@ -96,6 +96,15 @@ section[id] { scroll-margin-top: 96px; }
 .sprite-outcomes { aspect-ratio: 3 / 2; background-image: url("visuals/outcomes.png"); background-size: 300% 300%; }
 .sprite-sectors { aspect-ratio: 1; background-image: url("visuals/sectors.png"); background-size: 300% 200%; }
 .sprite-flow { aspect-ratio: .875; background-image: url("visuals/flow.png"); background-size: 400% 200%; }
+/* The supplied flow sheet has four illustrations on its first row and three on its second.
+   Each token therefore receives an individual proportional crop instead of a uniform grid cell. */
+.sprite-flow[style*="--sx:0%;--sy:0%"] { background-size: 400% 200%; background-position: 0% 0%; }
+.sprite-flow[style*="--sx:33%;--sy:0%"] { background-size: 400% 200%; background-position: 33.333% 0%; }
+.sprite-flow[style*="--sx:64%;--sy:0%"] { background-size: 410% 205%; background-position: 64% 0%; }
+.sprite-flow[style*="--sx:99%;--sy:0%"] { background-size: 380% 190%; background-position: 98% 0%; }
+.sprite-flow[style*="--sx:7%;--sy:100%"] { background-size: 350% 175%; background-position: 6% 107%; }
+.sprite-flow[style*="--sx:50%;--sy:100%"] { background-size: 340% 170%; background-position: 51% 111%; }
+.sprite-flow[style*="--sx:94%;--sy:100%"] { background-size: 340% 170%; background-position: 95% 111%; }
 .sprite-layers { aspect-ratio: 1; background-image: url("visuals/layers.png"); background-size: 300% 100%; }
 .sprite-technology { aspect-ratio: 1.006; background-image: url("visuals/technology.png"); background-size: 400% 200%; }
 
